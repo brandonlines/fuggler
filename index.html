@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Steal a Fuggler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <h1>STEAL A FUGGLER</h1>
+    <p class="subtitle">8-Bit Sneak and Grab</p>
+
+    <section class="hud" aria-label="Game stats">
+      <div class="hud-item">Score: <span id="score">0</span></div>
+      <div class="hud-item">Time: <span id="time">60</span>s</div>
+      <div class="hud-item">Lives: <span id="lives">3</span></div>
+      <div class="hud-item">Level: <span id="level">1</span></div>
+    </section>
+
+    <canvas id="game" width="640" height="400" aria-label="Steal a Fuggler game area" role="img"></canvas>
+
+    <section class="controls">
+      <p><strong>Move:</strong> Arrow Keys / WASD</p>
+      <p><strong>Sprint:</strong> Shift</p>
+      <p><strong>Start / Restart:</strong> Space</p>
+      <p><strong>Goal:</strong> Grab Fugglers and return to the green hideout while dodging guards.</p>
+    </section>
+
+    <p id="message" class="message">Press SPACE to start stealing Fugglers.</p>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>
