@@ -11,6 +11,7 @@ A lightweight 8-bit HTML/Canvas game built around a classic steal-and-escape loo
 
 ## Controls
 - Move: `WASD` or Arrow Keys
+- Mobile/Mouse: tap/click destination on the map or use virtual buttons
 - Sprint: `Shift`
 - Start/Restart: `Space`
 

@@ -6,7 +6,8 @@ const ui = {
   time: document.getElementById("time"),
   lives: document.getElementById("lives"),
   level: document.getElementById("level"),
-  message: document.getElementById("message")
+  message: document.getElementById("message"),
+  touchButtons: Array.from(document.querySelectorAll(".touch-btn"))
 };
 
 const WORLD = {
@@ -28,6 +29,7 @@ const state = {
   guards: [],
   walls: [],
   keys: new Set(),
+  moveTarget: null,
   carrying: false,
   spawnCooldown: 0,
   timerAccumulator: 0,
@@ -85,10 +87,17 @@ function randomOpenSpot(size = 14) {
 
 function createFuggler() {
   const pos = randomOpenSpot(14);
+  const palettes = [
+    { base: "#f6d679", patch: "#f2b95d", eye: "#2b1a05", mouth: "#8d2323" },
+    { base: "#f7c8c8", patch: "#e8a4be", eye: "#2c1b27", mouth: "#7d1f4f" },
+    { base: "#c7ef9e", patch: "#8fd178", eye: "#193017", mouth: "#315f2a" }
+  ];
+  const palette = palettes[Math.floor(rand(0, palettes.length))];
   return {
     ...pos,
     type: "fuggler",
-    pulse: rand(0, Math.PI * 2)
+    pulse: rand(0, Math.PI * 2),
+    palette
   };
 }
 
@@ -133,6 +142,7 @@ function startGame() {
   state.walls = buildWalls();
   state.fugglers = [];
   state.guards = [];
+  state.moveTarget = null;
   state.carrying = false;
   state.spawnCooldown = 0;
   state.timerAccumulator = 0;
@@ -187,6 +197,21 @@ function movePlayer(dt) {
   if (state.keys.has("arrowup") || state.keys.has("w")) dy -= 1;
   if (state.keys.has("arrowdown") || state.keys.has("s")) dy += 1;
 
+  if (state.moveTarget) {
+    const centerX = p.x + p.w / 2;
+    const centerY = p.y + p.h / 2;
+    const tx = state.moveTarget.x - centerX;
+    const ty = state.moveTarget.y - centerY;
+    const distance = Math.hypot(tx, ty);
+
+    if (distance > 4) {
+      dx += tx / distance;
+      dy += ty / distance;
+    } else {
+      state.moveTarget = null;
+    }
+  }
+
   if (dx === 0 && dy === 0) {
     return;
   }
@@ -238,14 +263,16 @@ function updateGuards(dt) {
 
     const candidateX = { x: nextX, y: guard.y, w: guard.w, h: guard.h };
     const candidateY = { x: guard.x, y: nextY, w: guard.w, h: guard.h };
+    const blockedX = state.walls.some((wall) => aabb(candidateX, wall)) || aabb(candidateX, WORLD.hideout);
+    const blockedY = state.walls.some((wall) => aabb(candidateY, wall)) || aabb(candidateY, WORLD.hideout);
 
-    if (state.walls.some((wall) => aabb(candidateX, wall))) {
+    if (blockedX) {
       guard.vx *= -1;
     } else {
       guard.x = nextX;
     }
 
-    if (state.walls.some((wall) => aabb(candidateY, wall))) {
+    if (blockedY) {
       guard.vy *= -1;
     } else {
       guard.y = nextY;
@@ -358,26 +385,71 @@ function drawWalls() {
 
 function drawFuggler(f) {
   const blink = Math.sin(performance.now() * 0.007 + f.pulse) > 0;
+  const { base, patch, eye, mouth } = f.palette;
 
-  ctx.fillStyle = "#f4d26c";
+  ctx.fillStyle = base;
   ctx.fillRect(f.x, f.y, f.w, f.h);
 
-  ctx.fillStyle = "#222";
+  ctx.fillStyle = patch;
+  for (let y = 1; y < f.h - 1; y += 3) {
+    for (let x = 1; x < f.w - 1; x += 3) {
+      if ((x + y) % 2 === 0) {
+        ctx.fillRect(f.x + x, f.y + y, 2, 2);
+      }
+    }
+  }
+
+  ctx.fillStyle = eye;
   ctx.fillRect(f.x + 3, f.y + 3, 2, 2);
   ctx.fillRect(f.x + 9, f.y + 3, 2, 2);
 
-  ctx.fillStyle = blink ? "#ff6b6b" : "#c94848";
+  ctx.fillStyle = blink ? "#fefefe" : "#efefef";
+  ctx.fillRect(f.x + 2, f.y + 10, 10, 2);
+
+  ctx.fillStyle = mouth;
   ctx.fillRect(f.x + 5, f.y + 8, 4, 2);
+
+  ctx.fillStyle = "#5e4112";
+  ctx.fillRect(f.x + 1, f.y + 1, 1, 4);
+  ctx.fillRect(f.x + 12, f.y + 7, 1, 4);
 }
 
 function drawGuard(g) {
-  ctx.fillStyle = "#ff6363";
-  ctx.fillRect(g.x, g.y, g.w, g.h);
+  const x = Math.round(g.x);
+  const y = Math.round(g.y);
 
-  ctx.fillStyle = "#2a0000";
-  ctx.fillRect(g.x + 3, g.y + 3, 2, 2);
-  ctx.fillRect(g.x + 9, g.y + 3, 2, 2);
-  ctx.fillRect(g.x + 5, g.y + 9, 4, 2);
+  ctx.fillStyle = "#6f7480";
+  ctx.fillRect(x + 3, y + 9, 9, 4);
+  ctx.fillRect(x + 11, y + 8, 2, 1);
+  ctx.fillRect(x + 12, y + 7, 2, 1);
+
+  ctx.fillStyle = "#f44336";
+  ctx.fillRect(x + 2, y + 2, 2, 9);
+  ctx.fillStyle = "#ff9800";
+  ctx.fillRect(x + 4, y + 2, 2, 9);
+  ctx.fillStyle = "#ffeb3b";
+  ctx.fillRect(x + 6, y + 2, 2, 9);
+  ctx.fillStyle = "#4caf50";
+  ctx.fillRect(x + 8, y + 2, 2, 9);
+  ctx.fillStyle = "#03a9f4";
+  ctx.fillRect(x + 10, y + 2, 2, 9);
+  ctx.fillStyle = "#9c27b0";
+  ctx.fillRect(x + 12, y + 4, 1, 5);
+
+  ctx.fillStyle = "#2e3033";
+  ctx.fillRect(x + 3, y + 4, 1, 1);
+  ctx.fillRect(x + 5, y + 6, 1, 1);
+  ctx.fillRect(x + 7, y + 4, 1, 1);
+  ctx.fillRect(x + 9, y + 6, 1, 1);
+
+  ctx.fillStyle = "#2f3138";
+  ctx.fillRect(x, y + 9, 3, 2);
+  ctx.fillRect(x, y + 10, 1, 2);
+  ctx.fillRect(x + 1, y + 8, 1, 1);
+  ctx.fillRect(x + 1, y + 12, 1, 1);
+  ctx.fillStyle = "#ff2e2e";
+  ctx.fillRect(x + 1, y + 9, 1, 1);
+  ctx.fillRect(x + 1, y + 11, 1, 1);
 }
 
 function drawPlayer() {
@@ -388,17 +460,34 @@ function drawPlayer() {
     return;
   }
 
-  ctx.fillStyle = state.carrying ? "#ffe071" : "#6ce3ff";
-  ctx.fillRect(p.x, p.y, p.w, p.h);
+  const x = Math.round(p.x);
+  const y = Math.round(p.y);
 
-  ctx.fillStyle = "#003844";
-  ctx.fillRect(p.x + 3, p.y + 3, 2, 2);
-  ctx.fillRect(p.x + 9, p.y + 3, 2, 2);
-  ctx.fillRect(p.x + 5, p.y + 9, 4, 2);
+  ctx.fillStyle = "#4f3420";
+  ctx.fillRect(x + 2, y, 10, 3);
+
+  ctx.fillStyle = "#d6a57e";
+  ctx.fillRect(x + 2, y + 3, 10, 4);
+  ctx.fillRect(x, y + 7, 2, 4);
+  ctx.fillRect(x + 12, y + 7, 2, 4);
+
+  ctx.fillStyle = "#2a1b14";
+  ctx.fillRect(x + 4, y + 4, 2, 1);
+  ctx.fillRect(x + 8, y + 4, 2, 1);
+  ctx.fillRect(x + 6, y + 6, 2, 1);
+
+  ctx.fillStyle = "#4da2d9";
+  ctx.fillRect(x + 2, y + 7, 10, 4);
+
+  ctx.fillStyle = "#2f5ca8";
+  ctx.fillRect(x + 2, y + 11, 4, 3);
+  ctx.fillRect(x + 8, y + 11, 4, 3);
 
   if (state.carrying) {
     ctx.fillStyle = "#f4d26c";
-    ctx.fillRect(p.x + p.w - 3, p.y - 3, 6, 6);
+    ctx.fillRect(x + 10, y - 2, 4, 4);
+    ctx.fillStyle = "#6b5020";
+    ctx.fillRect(x + 11, y - 1, 2, 2);
   }
 }
 
@@ -481,6 +570,63 @@ window.addEventListener("keydown", (ev) => {
 window.addEventListener("keyup", (ev) => {
   state.keys.delete(ev.key.toLowerCase());
 });
+
+function setMoveTargetFromPointer(ev) {
+  const rect = canvas.getBoundingClientRect();
+  const x = ((ev.clientX - rect.left) / rect.width) * WORLD.width;
+  const y = ((ev.clientY - rect.top) / rect.height) * WORLD.height;
+  state.moveTarget = {
+    x: clamp(x, 0, WORLD.width),
+    y: clamp(y, 0, WORLD.height)
+  };
+}
+
+canvas.addEventListener("pointerdown", (ev) => {
+  ev.preventDefault();
+  if (!state.running) {
+    startGame();
+  }
+  setMoveTargetFromPointer(ev);
+});
+
+canvas.addEventListener("pointermove", (ev) => {
+  if (ev.buttons > 0) {
+    ev.preventDefault();
+    setMoveTargetFromPointer(ev);
+  }
+});
+
+for (const btn of ui.touchButtons) {
+  const key = btn.dataset.key;
+  const action = btn.dataset.action;
+
+  btn.addEventListener("pointerdown", (ev) => {
+    ev.preventDefault();
+    btn.classList.add("active");
+
+    if (action === "start") {
+      if (!state.running) {
+        startGame();
+      }
+      return;
+    }
+
+    if (key) {
+      state.keys.add(key);
+    }
+  });
+
+  const release = () => {
+    btn.classList.remove("active");
+    if (key) {
+      state.keys.delete(key);
+    }
+  };
+
+  btn.addEventListener("pointerup", release);
+  btn.addEventListener("pointercancel", release);
+  btn.addEventListener("pointerleave", release);
+}
 
 state.player = createPlayer();
 render();

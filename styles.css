@@ -72,6 +72,70 @@ canvas {
   border: 4px solid #b8d1ff;
   background: #0c1528;
   display: block;
+  touch-action: none;
+}
+
+.touch-controls {
+  display: none;
+  margin-top: 12px;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 48px);
+  grid-template-rows: repeat(3, 48px);
+  gap: 6px;
+}
+
+.touch-btn {
+  border: 3px solid #b8d1ff;
+  background: #203764;
+  color: #f9f3d9;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+}
+
+.touch-btn:active,
+.touch-btn.active {
+  background: #3d62a6;
+  transform: translateY(1px);
+}
+
+.up {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.down {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.actions .touch-btn {
+  min-width: 96px;
+  min-height: 44px;
 }
 
 .controls {
@@ -105,5 +169,11 @@ canvas {
 
   .controls {
     font-size: 8px;
+  }
+}
+
+@media (hover: none), (pointer: coarse), (max-width: 740px) {
+  .touch-controls {
+    display: flex;
   }
 }

@@ -23,8 +23,22 @@
 
     <canvas id="game" width="640" height="400" aria-label="Steal a Fuggler game area" role="img"></canvas>
 
+    <section class="touch-controls" aria-label="Mobile controls">
+      <div class="dpad">
+        <button class="touch-btn up" data-key="arrowup" aria-label="Move up">▲</button>
+        <button class="touch-btn left" data-key="arrowleft" aria-label="Move left">◀</button>
+        <button class="touch-btn right" data-key="arrowright" aria-label="Move right">▶</button>
+        <button class="touch-btn down" data-key="arrowdown" aria-label="Move down">▼</button>
+      </div>
+      <div class="actions">
+        <button class="touch-btn" data-key="shift" aria-label="Sprint">SPRINT</button>
+        <button class="touch-btn" data-action="start" aria-label="Start or restart">START</button>
+      </div>
+    </section>
+
     <section class="controls">
       <p><strong>Move:</strong> Arrow Keys / WASD</p>
+      <p><strong>Mobile:</strong> Virtual pad or tap/click map to move</p>
       <p><strong>Sprint:</strong> Shift</p>
       <p><strong>Start / Restart:</strong> Space</p>
       <p><strong>Goal:</strong> Grab Fugglers and return to the green hideout while dodging guards.</p>
