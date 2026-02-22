@@ -1,5 +1,7 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+const LOGICAL_WIDTH = 960;
+const LOGICAL_HEIGHT = 600;
 
 const ui = {
   score: document.getElementById("score"),
@@ -11,8 +13,8 @@ const ui = {
 };
 
 const WORLD = {
-  width: canvas.width,
-  height: canvas.height,
+  width: LOGICAL_WIDTH,
+  height: LOGICAL_HEIGHT,
   tile: 16,
   hideout: { x: 14, y: 14, w: 92, h: 66 }
 };
@@ -51,6 +53,14 @@ function aabb(a, b) {
 
 function clamp(v, min, max) {
   return Math.max(min, Math.min(max, v));
+}
+
+function configureCanvasResolution() {
+  const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 3));
+  canvas.width = Math.floor(WORLD.width * dpr);
+  canvas.height = Math.floor(WORLD.height * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.imageSmoothingEnabled = false;
 }
 
 function createPlayer() {
@@ -629,5 +639,7 @@ for (const btn of ui.touchButtons) {
 }
 
 state.player = createPlayer();
+configureCanvasResolution();
+window.addEventListener("resize", configureCanvasResolution);
 render();
 requestAnimationFrame(loop);
