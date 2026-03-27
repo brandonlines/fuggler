@@ -1,11 +1,17 @@
 :root {
-  --bg: #0f1a30;
-  --panel: #1c2d4d;
-  --panel-edge: #86a9d4;
-  --text: #f9f3d9;
-  --accent: #ffd34d;
-  --danger: #ff6161;
-  --safe: #56d07a;
+  --bg: #18080b;
+  --panel: #341116;
+  --panel-edge: #d95a5a;
+  --panel-shadow: #120407;
+  --card: #45171d;
+  --card-edge: #b84b52;
+  --text: #fff2df;
+  --accent: #ffb347;
+  --accent-strong: #ffd36b;
+  --danger: #ff6666;
+  --safe: #78dfba;
+  --button: #5a1c23;
+  --button-active: #8a2f37;
 }
 
 * {
@@ -18,9 +24,10 @@ body {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(circle at 20% 20%, #2e3f64 0%, transparent 36%),
-    radial-gradient(circle at 80% 70%, #2b1e4f 0%, transparent 30%),
-    linear-gradient(180deg, #0e1124, #090d1a 60%, #05070f);
+    radial-gradient(circle at 18% 18%, #7a1f2c 0%, transparent 34%),
+    radial-gradient(circle at 82% 22%, #51213f 0%, transparent 28%),
+    radial-gradient(circle at 70% 78%, #2f5d58 0%, transparent 26%),
+    linear-gradient(180deg, #25070c, #130509 58%, #080204);
   color: var(--text);
   font-family: "Press Start 2P", monospace;
   padding: 20px;
@@ -30,7 +37,7 @@ body {
   width: min(1200px, 100%);
   background: var(--panel);
   border: 4px solid var(--panel-edge);
-  box-shadow: 0 0 0 4px #0a1224;
+  box-shadow: 0 0 0 4px var(--panel-shadow), 0 24px 60px rgba(0, 0, 0, 0.45);
   padding: 18px;
 }
 
@@ -40,13 +47,14 @@ h1 {
   font-size: clamp(18px, 4vw, 32px);
   letter-spacing: 1px;
   color: var(--accent);
-  text-shadow: 2px 2px 0 #533f00;
+  text-shadow: 2px 2px 0 #6d2307;
 }
 
 .subtitle {
   text-align: center;
   margin: 10px 0 16px;
   font-size: 11px;
+  color: #ffd9c0;
 }
 
 .hud {
@@ -57,11 +65,12 @@ h1 {
 }
 
 .hud-item {
-  background: #13213b;
-  border: 3px solid #6f8ebf;
+  background: linear-gradient(180deg, #562028, #40151b);
+  border: 3px solid var(--card-edge);
   padding: 10px 8px;
   font-size: 10px;
   text-align: center;
+  box-shadow: inset 0 0 0 2px rgba(255, 209, 166, 0.08);
 }
 
 canvas {
@@ -69,10 +78,11 @@ canvas {
   max-width: 100%;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
-  border: 4px solid #b8d1ff;
-  background: #0c1528;
+  border: 4px solid #f0a5a5;
+  background: #19070a;
   display: block;
   touch-action: none;
+  box-shadow: inset 0 0 0 2px rgba(255, 209, 166, 0.08);
 }
 
 .touch-controls {
@@ -91,19 +101,20 @@ canvas {
 }
 
 .touch-btn {
-  border: 3px solid #b8d1ff;
-  background: #203764;
-  color: #f9f3d9;
+  border: 3px solid #f0a5a5;
+  background: linear-gradient(180deg, var(--button), #43151b);
+  color: var(--text);
   font-family: inherit;
   font-size: 11px;
   line-height: 1;
   cursor: pointer;
   user-select: none;
+  box-shadow: inset 0 0 0 2px rgba(255, 202, 157, 0.08);
 }
 
 .touch-btn:active,
 .touch-btn.active {
-  background: #3d62a6;
+  background: var(--button-active);
   transform: translateY(1px);
 }
 
@@ -140,8 +151,8 @@ canvas {
 
 .controls {
   margin-top: 12px;
-  border: 3px solid #6f8ebf;
-  background: #13213b;
+  border: 3px solid var(--card-edge);
+  background: linear-gradient(180deg, #4a1b21, #341116);
   padding: 10px;
   font-size: 9px;
   line-height: 1.8;
@@ -155,7 +166,7 @@ canvas {
   min-height: 24px;
   margin: 12px 0 0;
   font-size: 10px;
-  color: #ffe68a;
+  color: var(--accent-strong);
 }
 
 @media (max-width: 740px) {

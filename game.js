@@ -19,6 +19,19 @@ const WORLD = {
   hideout: { x: 14, y: 14, w: 92, h: 66 }
 };
 
+const THEME = {
+  arenaBase: "#1a070b",
+  arenaTileA: "#2a0d13",
+  arenaTileB: "#230a10",
+  hideoutFill: "#214b43",
+  hideoutStroke: "#8af2c1",
+  hideoutText: "#e9ffee",
+  wallFill: "#6b252d",
+  wallStroke: "#f2a1a1",
+  overlay: "rgba(18, 4, 7, 0.78)",
+  overlayText: "#ffd36b"
+};
+
 const state = {
   running: false,
   gameOver: false,
@@ -361,33 +374,33 @@ function updateTimer(dt) {
 }
 
 function drawBackground() {
-  ctx.fillStyle = "#0c1528";
+  ctx.fillStyle = THEME.arenaBase;
   ctx.fillRect(0, 0, WORLD.width, WORLD.height);
 
   for (let y = 0; y < WORLD.height; y += WORLD.tile) {
     for (let x = 0; x < WORLD.width; x += WORLD.tile) {
       const even = ((x + y) / WORLD.tile) % 2 === 0;
-      ctx.fillStyle = even ? "#111d36" : "#0f1930";
+      ctx.fillStyle = even ? THEME.arenaTileA : THEME.arenaTileB;
       ctx.fillRect(x, y, WORLD.tile, WORLD.tile);
     }
   }
 
-  ctx.fillStyle = "#2a5f3b";
+  ctx.fillStyle = THEME.hideoutFill;
   ctx.fillRect(WORLD.hideout.x, WORLD.hideout.y, WORLD.hideout.w, WORLD.hideout.h);
-  ctx.strokeStyle = "#8cf0a8";
+  ctx.strokeStyle = THEME.hideoutStroke;
   ctx.lineWidth = 2;
   ctx.strokeRect(WORLD.hideout.x, WORLD.hideout.y, WORLD.hideout.w, WORLD.hideout.h);
 
-  ctx.fillStyle = "#d7ffd1";
+  ctx.fillStyle = THEME.hideoutText;
   ctx.font = "8px 'Press Start 2P'";
   ctx.fillText("HIDEOUT", WORLD.hideout.x + 10, WORLD.hideout.y + 18);
 }
 
 function drawWalls() {
   for (const wall of state.walls) {
-    ctx.fillStyle = "#3b4d72";
+    ctx.fillStyle = THEME.wallFill;
     ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
-    ctx.strokeStyle = "#9bb4e2";
+    ctx.strokeStyle = THEME.wallStroke;
     ctx.lineWidth = 2;
     ctx.strokeRect(wall.x, wall.y, wall.w, wall.h);
   }
@@ -503,10 +516,10 @@ function drawPlayer() {
 
 function drawOverlay() {
   if (!state.running) {
-    ctx.fillStyle = "rgba(4, 8, 16, 0.75)";
+    ctx.fillStyle = THEME.overlay;
     ctx.fillRect(0, 0, WORLD.width, WORLD.height);
 
-    ctx.fillStyle = "#ffef99";
+    ctx.fillStyle = THEME.overlayText;
     ctx.font = "14px 'Press Start 2P'";
     const title = state.gameOver ? "GAME OVER" : "STEAL A FUGGLER";
     ctx.fillText(title, 175, 170);
